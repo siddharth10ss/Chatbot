@@ -13,3 +13,4 @@ uvicorn
 pytesseract
 Pillow
 python-multipart
+deep-translator

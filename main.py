@@ -13,9 +13,11 @@ from src.utils import (
     get_sentiment,
     store_document_text,
     retrieve_document_context,
+    translate_text,  # <-- Import the new function
 )
 from fastapi.middleware.cors import CORSMiddleware
 import uuid
+from typing import Optional
 
 app = FastAPI()
 
@@ -31,6 +33,7 @@ history = []
 
 class ChatMessage(BaseModel):
     message: str
+    target_language: Optional[str] = None
 
 @app.post("/chat")
 def chat(chat_message: ChatMessage):
@@ -61,6 +64,9 @@ def chat(chat_message: ChatMessage):
     if len(history) > 5:
         history.pop(0)
         
+    if chat_message.target_language and chat_message.target_language != 'en':
+        response = translate_text(response, chat_message.target_language)
+        
     return {"response": response}
 
 @app.post("/upload")
@@ -71,6 +77,11 @@ async def upload_file(file: UploadFile = File(...)):
         
         if file.content_type.startswith("image/"):
             image = Image.open(io.BytesIO(contents))
+            # Convert to grayscale
+            image = image.convert('L')
+            # Apply binary thresholding (example: pixels > 128 become 255, others 0)
+            # This threshold value might need tuning based on image quality
+            image = image.point(lambda x: 0 if x < 128 else 255, '1')
             extracted_text = pytesseract.image_to_string(image)
         elif file.content_type == "application/pdf":
             # pdfminer.six expects a file-like object

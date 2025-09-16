@@ -7,6 +7,7 @@ import speech_recognition as sr
 from groq import Groq
 import ollama
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from deep_translator import GoogleTranslator
 
 # --- Sentiment Analyzer ---
 sentiment_analyzer = SentimentIntensityAnalyzer()
@@ -167,3 +168,15 @@ def listen():
         except sr.RequestError as e:
             print(f"Could not request results from Google Speech Recognition service; {e}")
             return ""
+
+def translate_text(text, target_language='en'):
+  """
+  Translates text to the specified target language.
+  """
+  try:
+    # You can change the target language to any supported language code (e.g., 'es', 'fr', 'ta' for Tamil)
+    translated_text = GoogleTranslator(source='auto', target=target_language).translate(text)
+    return translated_text
+  except Exception as e:
+    print(f"Error during translation: {e}")
+    return text # Return original text if translation fails

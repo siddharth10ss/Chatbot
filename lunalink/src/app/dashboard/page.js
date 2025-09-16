@@ -86,6 +86,18 @@ export default function Dashboard() {
   const [isRecording, setIsRecording] = useState(false)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const fileInputRef = useRef(null)
+  const [selectedLanguage, setSelectedLanguage] = useState("en") // Default to English
+
+  const supportedLanguages = [
+    { code: "en", name: "English" },
+    { code: "es", name: "Spanish" },
+    { code: "fr", name: "French" },
+    { code: "de", name: "German" },
+    { code: "hi", name: "Hindi" },
+    { code: "zh-CN", name: "Chinese (Simplified)" },
+    { code: "ta", name: "Tamil" },
+    // Add more languages as needed, ensure they are supported by Googletrans and Argos Translate
+  ]
 
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
@@ -121,7 +133,7 @@ export default function Dashboard() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: inputMessage }),
+        body: JSON.stringify({ message: inputMessage, target_language: selectedLanguage }),
       })
 
       if (!response.ok) {
@@ -773,6 +785,17 @@ export default function Dashboard() {
               >
                 <Paperclip className="h-4 w-4" />
               </button>
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className={`flex-shrink-0 p-3 ${isDarkMode ? "bg-gray-700/50" : "bg-gray-200/50"} rounded-xl hover:bg-gray-700/70 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 self-end shadow-lg border border-white/10 text-sm`}
+              >
+                {supportedLanguages.map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.name}
+                  </option>
+                ))}
+              </select>
               <button
                 onClick={handleVoiceInput}
                 className={`flex-shrink-0 p-3 ${isDarkMode ? "bg-gray-700/50" : "bg-gray-200/50"} rounded-xl hover:bg-gray-700/70 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 self-end shadow-lg border border-white/10`}
