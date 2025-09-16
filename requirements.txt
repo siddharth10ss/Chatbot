@@ -1,0 +1,15 @@
+sentence-transformers
+chromadb
+gTTS
+SpeechRecognition
+pydub
+python-dotenv
+requests
+groq
+ollama
+nltk
+fastapi
+uvicorn
+pytesseract
+Pillow
+python-multipart
